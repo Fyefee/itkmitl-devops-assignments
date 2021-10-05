@@ -13,27 +13,23 @@ services:
       SERVICE_VERSION: v2
       MONGO_DB_URL: mongodb://mongodb:27017/ratings
       MONGO_DB_USERNAME: ratings
-      MONGO_DB_PASSWORD: jeffy
-    links:
-      - "mongodb:mongodb"
+      MONGO_DB_PASSWORD: CHANGEME
   mongodb:
     image: bitnami/mongodb:latest
     ports:
       - "27017:27017"
     volumes:
-      - "~/ratings/databases:/docker-entrypoint-initdb.d"
+      - "./ratings/databases:/docker-entrypoint-initdb.d"
     environment:
-      MONGODB_ROOT_PASSWORD: jeffy
+      MONGODB_ROOT_PASSWORD: CHANGEME
       MONGODB_USERNAME: ratings
-      MONGODB_PASSWORD: jeffy
+      MONGODB_PASSWORD: CHANGEME
       MONGODB_DATABASE: ratings
   reviews:
     build: reviews/
     image: ghcr.io/fyefee/bookinfo-reviews:dev
     ports:
       - "8082:8082"
-    links:
-      - "ratings:ratings"
     environment:
       ENABLE_RATINGS: "true"
       STAR_COLOR: salmon 
@@ -43,12 +39,7 @@ services:
     image: ghcr.io/fyefee/bookinfo-productpage:dev
     ports:
       - "8083:8083"
-    links:
-      - "details:details"
-      - "reviews:reviews"
-      - "ratings:ratings"
     environment:
       DETAILS_HOSTNAME: http://details:8081
       REVIEWS_HOSTNAME: http://reviews:8082
       RATINGS_HOSTNAME: http://ratings:8080
-
